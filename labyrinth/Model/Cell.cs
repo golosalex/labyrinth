@@ -50,13 +50,18 @@ namespace labyrinth.Model
         }
 
         public int Row { get; }
-        public int Colom { get; }
+        public int Colomn { get; }
 
         public Cell(int row, int col)
         {
             Row = row;
 
-            Colom = col;
+            Colomn = col;
+            LeftWall = true;
+            topWall = true;
+            rightWall = true;
+            bottomWall = true;
+
         }
         public event EventHandler<Cell>? CellChanged;
     }

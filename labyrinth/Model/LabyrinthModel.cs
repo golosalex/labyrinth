@@ -31,18 +31,17 @@ namespace labyrinth.Model
                 _labyrinthData = value;
             }
         }
-        public int Rows { get; private set; }
-        public int Coloms { get; private set; }
+        public int Rows { get => LabyrinthData.Rows; }
+        public int Colomns { get => LabyrinthData.Colomns; }
         /// <summary>
         /// конструктор
         /// </summary>
         /// <param name="rows"></param>
-        /// <param name="coloms"></param>
-        public LabyrinthModel(int rows = 10, int coloms = 10)
+        /// <param name="colomns"></param>
+        public LabyrinthModel(int rows = 10, int colomns = 10)
         {
-            Rows = rows;
-            Coloms = coloms;
-            Cell[,] cells = CreateArrayOfCell(rows, coloms);
+            
+            Cell[,] cells = CreateArrayOfCell(rows, colomns);
 
             _labyrinthData = new ReadOnly2DArray<Cell>(cells);
             _cellWatcher = new CellWatcher(LabyrinthData);
@@ -58,8 +57,6 @@ namespace labyrinth.Model
 
         public void ChangeSize(int newRows, int newColoms)
         {
-            Rows = newRows;
-            Coloms = newColoms;
             Cell[,] cells = CreateArrayOfCell(newRows, newColoms);
 
             LabyrinthData = new ReadOnly2DArray<Cell>(cells);

@@ -11,13 +11,13 @@ namespace labyrinth.Common
     {
         private readonly T[,] array;
         public int Rows { get; }
-        public int Columns { get; }
+        public int Colomns { get; }
 
         public ReadOnly2DArray(T[,] array)
         {
             this.array = array;
             Rows = array.GetLength(0);
-            Columns = array.GetLength(1);
+            Colomns = array.GetLength(1);
         }
 
         public T this[int row, int column] => array[row, column];
@@ -25,7 +25,7 @@ namespace labyrinth.Common
         public IEnumerator<T> GetEnumerator()
         {
             int rows = Rows;
-            int columns = Columns;
+            int columns = Colomns;
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
