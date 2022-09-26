@@ -31,7 +31,7 @@ namespace labyrinth.ViewModel
         public int Coloms { get => _coloms; set => Set<int>(ref _coloms, value); }
 
         public int ModelsRows { get => _model.Rows; set => Set<int>(ref _modelRows, value); }
-        public int ModelsColoms { get => _model.Colomns; set => Set<int>(ref _modelColomns, value); }
+        public int ModelsColomns { get => _model.Colomns; set => Set<int>(ref _modelColomns, value); }
 
         /// <summary>
         /// это для дизайнера студии, не юзать!!!
@@ -45,7 +45,9 @@ namespace labyrinth.ViewModel
         public LabyrinthViewModel(LabyrinthModel model, Launcher launcher)
         {
             _model = model;
-            _model.ChangeSize(20, 10);
+            _modelColomns = model.Colomns;
+            _modelRows = model.Rows;
+            
             var newData = model.LabyrinthData;
             var array = new CellViewModel[_model.Rows, _model.Colomns];
             foreach (var cell in newData)
@@ -77,6 +79,8 @@ namespace labyrinth.ViewModel
 
         private void InitData(ReadOnly2DArray<Cell> newData)
         {
+            ModelsColomns = newData.Colomns;
+            ModelsRows=newData.Rows;
             var array = new CellViewModel[_model.Rows, _model.Colomns];
             foreach (var cell in newData)
             {

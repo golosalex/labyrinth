@@ -74,7 +74,8 @@
                 <ItemsControl ItemsSource="{Binding Data}" >
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid  Rows="{Binding ModelRows}" Columns="{Binding ModelColomns}"></UniformGrid>
+                            <!--тут не пашет биндинг-->
+                            <UniformGrid  Rows="{Binding ModelsRows}" Columns="{Binding ModelsColomns}"></UniformGrid>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
