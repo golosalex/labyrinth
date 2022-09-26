@@ -27,7 +27,7 @@ internal class Program
         //labyrinthModel.LabyrinthData[12, 2].LeftWall = false;
 
 
-        var VM = new LabyrinthViewModel(labyrinthModel);
+        var VM = new LabyrinthViewModel(labyrinthModel,new labyrinth.Launcher());
 
         labyrinthModel.ChangeSize(20, 20);
         labyrinthModel.LabyrinthData[2, 2].LeftWall = false;

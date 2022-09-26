@@ -13,5 +13,10 @@ namespace labyrinth
     /// </summary>
     public partial class App : Application
     {
+        private void onStartUp(object sender, StartupEventArgs e)
+        {
+            Launcher launcher = new Launcher();
+            launcher.ShowMainWindow();
+        }
     }
 }

@@ -3,27 +3,49 @@ using labyrinth.Model;
 using MazeProj.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace labyrinth.ViewModel
 {
     public class LabyrinthViewModel : BasePropertyChanged
     {
+        
+
         private int _rows;
         private int _coloms;
+        private int _modelRows;
+        private int _modelColomns;
+        private ReadOnly2DArray<CellViewModel> data;
         private readonly LabyrinthModel _model;
-        public ReadOnly2DArray<CellViewModel> Data { get; private set; }
+        private readonly Launcher _launcher;
+
+        public ICommand RemakeLabirinth { get; }
+
+        public ReadOnly2DArray<CellViewModel> Data { get => data; private set => Set<ReadOnly2DArray<CellViewModel>>(ref data, value); }
         public int Rows { get => _rows; set => Set<int>(ref _rows, value); }
-        public int Coloms { get => _coloms; set => Set<int>(ref _coloms,value); }
+        public int Coloms { get => _coloms; set => Set<int>(ref _coloms, value); }
 
-        public int ModelsRows { get => _model.Rows; }
-        public int ModelsColoms { get=> _model.Colomns; }
+        public int ModelsRows { get => _model.Rows; set => Set<int>(ref _modelRows, value); }
+        public int ModelsColoms { get => _model.Colomns; set => Set<int>(ref _modelColomns, value); }
 
-        public LabyrinthViewModel(LabyrinthModel model)
+        /// <summary>
+        /// это для дизайнера студии, не юзать!!!
+        /// </summary>
+        public LabyrinthViewModel() : this(new LabyrinthModel(), new Launcher())
+        {
+
+        }
+
+
+        public LabyrinthViewModel(LabyrinthModel model, Launcher launcher)
         {
             _model = model;
+            _model.ChangeSize(20, 10);
             var newData = model.LabyrinthData;
             var array = new CellViewModel[_model.Rows, _model.Colomns];
             foreach (var cell in newData)
@@ -36,6 +58,14 @@ namespace labyrinth.ViewModel
 
             model.CellsChanged += Model_CellsChanged;
             model.SomeCellChenged += Model_SomeCellChenged;
+            _launcher = launcher;
+            RemakeLabirinth = new RelayCommand(_ => Remake());
+        }
+
+        private void Remake()
+        {
+            _model.ChangeSize(Rows, Coloms);
+            
         }
 
         private void Model_SomeCellChenged(object? sender, Cell e)
@@ -53,8 +83,9 @@ namespace labyrinth.ViewModel
                 array[cell.Row, cell.Colomn] = new CellViewModel(cell);
             }
             Data = new ReadOnly2DArray<CellViewModel>(array);
-            Rows =  _model.Rows;
-            Coloms =  _model.Colomns;
+            Rows = _model.Rows;
+            Coloms = _model.Colomns;
+
         }
 
         private void Model_CellsChanged(object? sender, ReadOnly2DArray<Cell> e)

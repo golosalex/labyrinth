@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <UniformGrid Rows="2" Columns="5">
+            <Button Content="Left Top" />
+            <Button Content="Right Top" />
+            <Button Content="Left Bottom" />
+            <Button Content="Right Bottom" />
+        </UniformGrid>
     </Grid>
 </Window>
