@@ -1,4 +1,5 @@
-﻿using labyrinth.Model;
+﻿using labyrinth.Common;
+using labyrinth.Model;
 using MazeProj.Common;
 using System;
 using System.Collections.Generic;
@@ -8,18 +9,20 @@ using System.Threading.Tasks;
 
 namespace labyrinth.ViewModel
 {
-    public class CellViewModel:BasePropertyChanged
+    public class CellViewModel : BasePropertyChanged
     {
         private bool _leftWall;
         private bool _topWall;
         private bool _rightWall;
         private bool _bottomWall;
+        private StatusEnum _cellStatus;
 
+        public StatusEnum CellStatus { get => _cellStatus; set => Set<StatusEnum>(ref _cellStatus,value); }
         public bool LeftWall
         {
             get => _leftWall;
             set => Set<bool>(ref _leftWall, value);
-            
+
         }
         public bool TopWall
         {
@@ -45,18 +48,20 @@ namespace labyrinth.ViewModel
             Row = cell.Row;
             Colomn = cell.Colomn;
 
-            LeftWall = cell.LeftWall;   
-            RightWall= cell.RightWall;
+            LeftWall = cell.LeftWall;
+            RightWall = cell.RightWall;
             TopWall = cell.TopWall;
             BottomWall = cell.BottomWall;
+            CellStatus = cell.Status;
         }
 
-        public void Update (Cell cell)
+        public void Update(Cell cell)
         {
             LeftWall = cell.LeftWall;
             RightWall = cell.RightWall;
             TopWall = cell.TopWall;
             BottomWall = cell.BottomWall;
+            CellStatus = cell.Status;
         }
 
 

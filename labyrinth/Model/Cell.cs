@@ -1,4 +1,5 @@
-﻿using System;
+﻿using labyrinth.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,7 +14,17 @@ namespace labyrinth.Model
         private bool topWall;
         private bool rightWall;
         private bool bottomWall;
+        private StatusEnum status;
 
+        public StatusEnum Status
+        {
+            get => status; 
+            set
+            {
+                status = value;
+                CellChanged?.Invoke(this, this);
+            }
+        }
         public bool LeftWall
         {
             get => leftWall;
@@ -61,7 +72,7 @@ namespace labyrinth.Model
             topWall = true;
             rightWall = true;
             bottomWall = true;
-
+            Status = StatusEnum.Isolated;
         }
         public event EventHandler<Cell>? CellChanged;
     }

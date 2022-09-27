@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MazeProj.View"
+        xmlns:converters="clr-namespace:labyrinth.View.Converters"
         xmlns:viewmodel="clr-namespace:labyrinth.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:LabyrinthViewModel, IsDesignTimeCreatable=True}"
         Title="LabirinthWindow" Height="450" Width="800">
     <Window.Resources>
+        <converters:CellToBrushConverter x:Key="StatusToBrushConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <SolidColorBrush Color="#e7e7e7" x:Key="BackColor"></SolidColorBrush>
         <SolidColorBrush Color="#8a8a8a" x:Key="ContentBack"></SolidColorBrush>
         <Style x:Key="CummonButton" TargetType="Button">
@@ -80,7 +83,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
+                            <Grid Background="{Binding CellStatus, Converter={StaticResource StatusToBrushConverter}}" SnapsToDevicePixels="True">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="3"/>
                                     <RowDefinition/>
@@ -91,10 +94,16 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="3"/>
                                 </Grid.ColumnDefinitions>
-                                <Border Grid.Column="1" Background="Black"/>
-                                <Border Grid.Row="1" Background="Black"/>
-                                <Border Grid.Row="2" Grid.Column="1" Background="Black"/>
-                                <Border Grid.Row="1" Grid.Column="2" Background="Black"/>
+                                <Border Grid.Column="1" Background="Black" Visibility="{Binding TopWall, Converter={StaticResource BoolToVis}}"/>
+                                <Border Grid.Row="1" Background="Black" Visibility="{Binding LeftWall, Converter={StaticResource BoolToVis}}"/>
+                                <Border Grid.Row="2" Grid.Column="1" Background="Black" Visibility="{Binding BottomWall, Converter={StaticResource BoolToVis}}"/>
+                                <Border Grid.Row="1" Grid.Column="2" Background="Black" Visibility="{Binding RightWall, Converter={StaticResource BoolToVis}}"/>
+                                <Border Grid.Row="1" Grid.Column="1" Background="{Binding CellStatus, Converter={StaticResource StatusToBrushConverter}}"/>
+                                <!--Углы всегда черные-->
+                                <Border Grid.Row="0" Grid.Column="0" Background="Black"/>
+                                <Border Grid.Row="0" Grid.Column="2" Background="Black"/>
+                                <Border Grid.Row="2" Grid.Column="0" Background="Black"/>
+                                <Border Grid.Row="2" Grid.Column="2" Background="Black"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -122,10 +131,10 @@
 
                 <TextBox Grid.Column="1" Grid.Row="0" Background="{StaticResource ContentBack}" VerticalContentAlignment="Center"  Margin="0,4" Text="{Binding Rows}"/>
                 <TextBox Grid.Column="1" Grid.Row="1" Background="{StaticResource ContentBack}" VerticalContentAlignment="Center" Margin="0,4" Text="{Binding Coloms}"/>
-                <TextBox Grid.Column="1" Grid.Row="5" Background="{StaticResource ContentBack}" VerticalContentAlignment="Center" Margin="0,4"/>
+                <TextBox Grid.Column="1" Grid.Row="5" Background="{StaticResource ContentBack}" VerticalContentAlignment="Center" Margin="0,4" Text="{Binding TimeSpanViewModel, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Button Grid.ColumnSpan="2" Grid.Row="3" Style="{StaticResource CummonButton}" Margin="3,5" Command="{Binding RemakeLabirinth}">ClearMaze</Button>
-                <Button Grid.ColumnSpan="2" Grid.Row="4" Style="{StaticResource CummonButton}" Margin="3,5">RandomMake</Button>
+                <Button Grid.ColumnSpan="2" Grid.Row="4" Style="{StaticResource CummonButton}" Margin="3,5" Command="{Binding GenerateCommand}">RandomMake</Button>
             </Grid>
 
         </Grid>

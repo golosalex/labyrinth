@@ -22,7 +22,7 @@ namespace labyrinth.Model
                 _cellWatcher = value;
             }
         }
-
+        public int TimeSpan { get; set; }
         public ReadOnly2DArray<Cell> LabyrinthData
         {
             get => _labyrinthData;
@@ -46,8 +46,20 @@ namespace labyrinth.Model
             _labyrinthData = new ReadOnly2DArray<Cell>(cells);
             _cellWatcher = new CellWatcher(LabyrinthData);
             CellWatcher.SomeCellChanched += CellWatcher_SomeCellChanched;
+            TimeSpan = 25;
         }
-
+        public void TestMethodWithCell()
+        {
+            LabyrinthData[2, 2].LeftWall = false;
+            LabyrinthData[2,1].RightWall= false;
+            LabyrinthData[2, 2].Status = StatusEnum.InStack;
+            LabyrinthData[2, 1].Status = StatusEnum.InLabirinth;
+        }
+        public void GenerateLabyrinth()
+        {
+            LabyrinthGenerator generator = new LabyrinthGenerator(this);
+            Task.Run(() => generator.GenerateLabyrinth());
+        }
         private void CellWatcher_SomeCellChanched(object? sender, Cell e)
         {
             SomeCellChenged?.Invoke(this, e);

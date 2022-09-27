@@ -14,22 +14,33 @@ namespace labyrinth.ViewModel
 {
     public class LabyrinthViewModel : BasePropertyChanged
     {
-        
+
 
         private int _rows;
         private int _coloms;
         private int _modelRows;
         private int _modelColomns;
         private ReadOnly2DArray<CellViewModel> data;
+        private int _timeSpanViewModel;
         private readonly LabyrinthModel _model;
         private readonly Launcher _launcher;
 
         public ICommand RemakeLabirinth { get; }
+        public ICommand TestCommand { get; }
+        public ICommand GenerateCommand { get; }
 
         public ReadOnly2DArray<CellViewModel> Data { get => data; private set => Set<ReadOnly2DArray<CellViewModel>>(ref data, value); }
         public int Rows { get => _rows; set => Set<int>(ref _rows, value); }
         public int Coloms { get => _coloms; set => Set<int>(ref _coloms, value); }
-
+        public int TimeSpanViewModel
+        {
+            get => _timeSpanViewModel; 
+            set
+            {
+                Set<int>(ref _timeSpanViewModel, value);
+                _model.TimeSpan=value;
+            }
+        }
         public int ModelsRows { get => _model.Rows; set => Set<int>(ref _modelRows, value); }
         public int ModelsColomns { get => _model.Colomns; set => Set<int>(ref _modelColomns, value); }
 
@@ -47,7 +58,7 @@ namespace labyrinth.ViewModel
             _model = model;
             _modelColomns = model.Colomns;
             _modelRows = model.Rows;
-            
+            TimeSpanViewModel=model.TimeSpan;
             var newData = model.LabyrinthData;
             var array = new CellViewModel[_model.Rows, _model.Colomns];
             foreach (var cell in newData)
@@ -62,12 +73,18 @@ namespace labyrinth.ViewModel
             model.SomeCellChenged += Model_SomeCellChenged;
             _launcher = launcher;
             RemakeLabirinth = new RelayCommand(_ => Remake());
+            TestCommand = new RelayCommand(_ => _model.TestMethodWithCell());
+            GenerateCommand = new RelayCommand(_ => Generate());
+        }
+        private void Generate()
+        {
+            _model.GenerateLabyrinth();
         }
 
         private void Remake()
         {
             _model.ChangeSize(Rows, Coloms);
-            
+
         }
 
         private void Model_SomeCellChenged(object? sender, Cell e)
@@ -80,7 +97,7 @@ namespace labyrinth.ViewModel
         private void InitData(ReadOnly2DArray<Cell> newData)
         {
             ModelsColomns = newData.Colomns;
-            ModelsRows=newData.Rows;
+            ModelsRows = newData.Rows;
             var array = new CellViewModel[_model.Rows, _model.Colomns];
             foreach (var cell in newData)
             {
