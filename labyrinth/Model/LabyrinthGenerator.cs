@@ -19,11 +19,12 @@ namespace labyrinth.Model
             Data = model.LabyrinthData;
         }
 
-        public void GenerateLabyrinth()
+        public void GenerateLabyrinth(CancellationToken ct)
         {
             // проверка что данные чистые и если нет то очищаем
             foreach (var cell in Data)
             {
+                if(ct.IsCancellationRequested) return;
                 if (cell.LeftWall == false &&
                     cell.RightWall == false &&
                     cell.TopWall == false &&
@@ -48,6 +49,7 @@ namespace labyrinth.Model
             isolatedCells--;
             while (stack.Count != 0)
             {
+                if (ct.IsCancellationRequested) return;
                 List<DirectionEnum> PosiibleDirections = GetPossibleDirections(stack);
                 //если двигаться из верхушки стека некуда, то отходим назад на 1 элемент
                 if (PosiibleDirections.Count == 0)
