@@ -1,10 +1,12 @@
 ﻿using labyrinth.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
 namespace labyrinth.Model
 {
@@ -21,10 +23,124 @@ namespace labyrinth.Model
 
         public void GenerateLabyrinth(CancellationToken ct)
         {
+
+            //CommonDeepWalkGenerate(ct);
+            ModifyDeepWalkGenerate(ct);
+        }
+        private void PrimaAlgorithmGenerate(CancellationToken ct)
+        {
+
+            foreach (var cell in Data)
+            {
+                if (ct.IsCancellationRequested) return;
+                if (cell.LeftWall == false &&
+                    cell.RightWall == false &&
+                    cell.TopWall == false &&
+                    cell.BottomWall == false &&
+
+                    cell.Status == StatusEnum.Isolated)
+                {
+                    continue;
+                }
+                cell.LeftWall = true;
+                cell.RightWall = true;
+                cell.BottomWall = true;
+                cell.TopWall = true;
+                cell.Status = StatusEnum.Isolated;
+            }
+            List<Cell> cellsInLabyrinth = new List<Cell>();
+            HashSet<Cell> cellsInBorderline = new HashSet<Cell>();
+            var startCell = Data[0,0];
+            cellsInLabyrinth.Add(Data[0, 0]);
+            AddCellsToBorderLine(cellsInBorderline, startCell);
+        }
+
+        private void AddCellsToBorderLine(HashSet<Cell> cellsInBorderline, Cell startCell)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ModifyDeepWalkGenerate(CancellationToken ct)
+        {
+            foreach (var cell in Data)
+            {
+                if (ct.IsCancellationRequested) return;
+                if (cell.LeftWall == false &&
+                    cell.RightWall == false &&
+                    cell.TopWall == false &&
+                    cell.BottomWall == false &&
+
+                    cell.Status == StatusEnum.Isolated)
+                {
+                    continue;
+                }
+                cell.LeftWall = true;
+                cell.RightWall = true;
+                cell.BottomWall = true;
+                cell.TopWall = true;
+                cell.Status = StatusEnum.Isolated;
+            }
+
+            HashSet<Stack<Cell>> setOfStacks = new HashSet<Stack<Cell>>();
+            Stack<Cell> firstStack = new Stack<Cell>();
+            firstStack.Push(Data[0, 0]);
+            Data[0, 0].Status = StatusEnum.InStack;
+            setOfStacks.Add(firstStack);
+
+            while (setOfStacks.Count > 0)
+            {
+                if (ct.IsCancellationRequested) return;
+                var activeSteck = setOfStacks.ElementAt(RND.Next(setOfStacks.Count));
+
+                List<DirectionEnum> PosiibleDirections = GetPossibleDirections(activeSteck);
+
+                if (PosiibleDirections.Count == 0)
+                {
+                    Cell topOfStack = activeSteck.Pop();
+                    topOfStack.Status = StatusEnum.InLabirinth;
+                    if (activeSteck.Count == 0)
+                    {
+                        setOfStacks.Remove(activeSteck);
+                    }
+                }
+                else
+                {
+                    if (PosiibleDirections.Count > 1)
+                    {
+                        bool isCreateNewBranch = RND.Next(20) == 1;
+                        if (isCreateNewBranch&&setOfStacks.Count<=7)
+                        {
+                            Stack<Cell> stack = new Stack<Cell>();
+                            stack.Push(activeSteck.Peek());//небольшая халтура чтобы использовать MowveTo в том виде как есть пришлось вылить воду из чайника.
+                            MoveTo(stack, PosiibleDirections[RND.Next(PosiibleDirections.Count - 1)]);
+                            MoveTo(activeSteck, PosiibleDirections[PosiibleDirections.Count - 1]);
+                            Stack<Cell> newStack = new Stack<Cell>(); // танец с бубном, чтобы избавиться от первого элемента в стаке.
+                            newStack.Push(stack.Peek());
+                            
+                            setOfStacks.Add(newStack);
+                        }
+                        else
+                        {
+                            MoveTo(activeSteck, PosiibleDirections[RND.Next(PosiibleDirections.Count)]);
+                        }
+
+                        
+                    }
+                    else
+                    {
+                        MoveTo(activeSteck, PosiibleDirections[RND.Next(PosiibleDirections.Count)]);
+                    }
+
+                }
+                Thread.Sleep(Model.TimeSpan);
+            }
+        }
+        private void CommonDeepWalkGenerate(CancellationToken ct)
+        {
             // проверка что данные чистые и если нет то очищаем
             foreach (var cell in Data)
             {
-                if(ct.IsCancellationRequested) return;
+                if (ct.IsCancellationRequested) return;
                 if (cell.LeftWall == false &&
                     cell.RightWall == false &&
                     cell.TopWall == false &&
@@ -64,8 +180,6 @@ namespace labyrinth.Model
 
                 Thread.Sleep(Model.TimeSpan);
             }
-
-
         }
 
         private void MoveTo(Stack<Cell> stack, DirectionEnum directionEnum)

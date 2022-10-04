@@ -40,7 +40,7 @@ namespace labyrinth.Model
         /// </summary>
         /// <param name="rows"></param>
         /// <param name="colomns"></param>
-        public LabyrinthModel(int rows = 10, int colomns = 10)
+        public LabyrinthModel(int rows = 30, int colomns = 30)
         {
             
             Cell[,] cells = CreateArrayOfCell(rows, colomns);
