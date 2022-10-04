@@ -25,11 +25,14 @@ namespace labyrinth.Model
         {
 
             //CommonDeepWalkGenerate(ct);
-            ModifyDeepWalkGenerate(ct);
+            //ModifyDeepWalkGenerate(ct);
+            PrimaAlgorithmGenerate(ct);
         }
-        private void PrimaAlgorithmGenerate(CancellationToken ct)
-        {
 
+        #region Private Algorithm methods
+        private void CommonDeepWalkGenerate(CancellationToken ct)
+        {
+            // проверка что данные чистые и если нет то очищаем
             foreach (var cell in Data)
             {
                 if (ct.IsCancellationRequested) return;
@@ -48,18 +51,31 @@ namespace labyrinth.Model
                 cell.TopWall = true;
                 cell.Status = StatusEnum.Isolated;
             }
-            List<Cell> cellsInLabyrinth = new List<Cell>();
-            HashSet<Cell> cellsInBorderline = new HashSet<Cell>();
-            var startCell = Data[0,0];
-            cellsInLabyrinth.Add(Data[0, 0]);
-            AddCellsToBorderLine(cellsInBorderline, startCell);
-        }
+            // сщетчик изолированных ячеек
+            int isolatedCells = Data.Rows * Data.Colomns;
+            // пушим в стек первый узел
+            Stack<Cell> stack = new Stack<Cell>();
+            stack.Push(Data[0, 0]);
+            Data[0, 0].Status = StatusEnum.InStack;
+            isolatedCells--;
+            while (stack.Count != 0)
+            {
+                if (ct.IsCancellationRequested) return;
+                List<DirectionEnum> PosiibleDirections = GetPossibleDirections(stack.Peek());
+                //если двигаться из верхушки стека некуда, то отходим назад на 1 элемент
+                if (PosiibleDirections.Count == 0)
+                {
+                    Cell topOfStack = stack.Pop();
+                    topOfStack.Status = StatusEnum.InLabirinth;
+                }
+                else
+                {
+                    stack.Push(MoveTo(stack.Peek(), PosiibleDirections[RND.Next(PosiibleDirections.Count)]));
+                }
 
-        private void AddCellsToBorderLine(HashSet<Cell> cellsInBorderline, Cell startCell)
-        {
-            throw new NotImplementedException();
+                Thread.Sleep(Model.TimeSpan);
+            }
         }
-
         private void ModifyDeepWalkGenerate(CancellationToken ct)
         {
             foreach (var cell in Data)
@@ -92,7 +108,7 @@ namespace labyrinth.Model
                 if (ct.IsCancellationRequested) return;
                 var activeSteck = setOfStacks.ElementAt(RND.Next(setOfStacks.Count));
 
-                List<DirectionEnum> PosiibleDirections = GetPossibleDirections(activeSteck);
+                List<DirectionEnum> PosiibleDirections = GetPossibleDirections(activeSteck.Peek());
 
                 if (PosiibleDirections.Count == 0)
                 {
@@ -108,36 +124,40 @@ namespace labyrinth.Model
                     if (PosiibleDirections.Count > 1)
                     {
                         bool isCreateNewBranch = RND.Next(20) == 1;
-                        if (isCreateNewBranch&&setOfStacks.Count<=7)
+                        if (isCreateNewBranch && setOfStacks.Count <= 7)
                         {
                             Stack<Cell> stack = new Stack<Cell>();
                             stack.Push(activeSteck.Peek());//небольшая халтура чтобы использовать MowveTo в том виде как есть пришлось вылить воду из чайника.
-                            MoveTo(stack, PosiibleDirections[RND.Next(PosiibleDirections.Count - 1)]);
-                            MoveTo(activeSteck, PosiibleDirections[PosiibleDirections.Count - 1]);
+                            stack.Push(MoveTo(stack.Peek(), PosiibleDirections[RND.Next(PosiibleDirections.Count - 1)]));
+                            activeSteck.Push(MoveTo(activeSteck.Peek(), PosiibleDirections[PosiibleDirections.Count - 1]));
                             Stack<Cell> newStack = new Stack<Cell>(); // танец с бубном, чтобы избавиться от первого элемента в стаке.
                             newStack.Push(stack.Peek());
-                            
+
                             setOfStacks.Add(newStack);
                         }
                         else
                         {
-                            MoveTo(activeSteck, PosiibleDirections[RND.Next(PosiibleDirections.Count)]);
+                            activeSteck.Push(MoveTo(activeSteck.Peek(), PosiibleDirections[RND.Next(PosiibleDirections.Count)]));
                         }
 
-                        
+
                     }
                     else
                     {
-                        MoveTo(activeSteck, PosiibleDirections[RND.Next(PosiibleDirections.Count)]);
+                        activeSteck.Push(MoveTo(activeSteck.Peek(), PosiibleDirections[RND.Next(PosiibleDirections.Count)]));
                     }
 
                 }
-                Thread.Sleep(Model.TimeSpan);
+                if (setOfStacks.Count > 0)
+                {
+                    Thread.Sleep(Model.TimeSpan / setOfStacks.Count);
+                }
+
             }
         }
-        private void CommonDeepWalkGenerate(CancellationToken ct)
+        private void PrimaAlgorithmGenerate(CancellationToken ct)
         {
-            // проверка что данные чистые и если нет то очищаем
+
             foreach (var cell in Data)
             {
                 if (ct.IsCancellationRequested) return;
@@ -156,82 +176,110 @@ namespace labyrinth.Model
                 cell.TopWall = true;
                 cell.Status = StatusEnum.Isolated;
             }
-            // сщетчик изолированных ячеек
-            int isolatedCells = Data.Rows * Data.Colomns;
-            // пушим в стек первый узел
-            Stack<Cell> stack = new Stack<Cell>();
-            stack.Push(Data[0, 0]);
-            Data[0, 0].Status = StatusEnum.InStack;
-            isolatedCells--;
-            while (stack.Count != 0)
+            List<Cell> cellsInLabyrinth = new List<Cell>();
+            HashSet<Cell> cellsInBorderline = new HashSet<Cell>();
+            var startCell = Data[0, 0];
+            startCell.Status = StatusEnum.InLabirinth;
+            cellsInLabyrinth.Add(Data[0, 0]);
+            AddCellsToBorderLine(cellsInBorderline, startCell);
+            while(cellsInBorderline.Count > 0)
             {
-                if (ct.IsCancellationRequested) return;
-                List<DirectionEnum> PosiibleDirections = GetPossibleDirections(stack);
-                //если двигаться из верхушки стека некуда, то отходим назад на 1 элемент
-                if (PosiibleDirections.Count == 0)
-                {
-                    Cell topOfStack = stack.Pop();
-                    topOfStack.Status = StatusEnum.InLabirinth;
-                }
-                else
-                {
-                    MoveTo(stack, PosiibleDirections[RND.Next(PosiibleDirections.Count)]);
-                }
-
+                Cell cellToAddToLabyrinth = cellsInBorderline.ElementAt(RND.Next(cellsInBorderline.Count));
+                var directions = GetPossibleDirections(cellToAddToLabyrinth, StatusEnum.InLabirinth);
+                var directionToHome = directions[RND.Next(directions.Count)];
+                Cell HoomeCell = GetCellFromDirection(cellToAddToLabyrinth, directionToHome);
+                MoveTo(cellToAddToLabyrinth, directionToHome);
+                cellToAddToLabyrinth.Status=StatusEnum.InLabirinth;
+                HoomeCell.Status=StatusEnum.InLabirinth;
+                cellsInBorderline.Remove(cellToAddToLabyrinth);
+                AddCellsToBorderLine(cellsInBorderline,cellToAddToLabyrinth);
                 Thread.Sleep(Model.TimeSpan);
             }
         }
+        #endregion
 
-        private void MoveTo(Stack<Cell> stack, DirectionEnum directionEnum)
+        #region Private methods
+        private void AddCellsToBorderLine(HashSet<Cell> cellsInBorderline, Cell startCell)
         {
-            Cell TopOfStack = stack.Peek();
+            var posssibleDirections = GetPossibleDirections(startCell);
+            foreach (var direction in posssibleDirections)
+            {
+                Cell newCell = GetCellFromDirection(startCell, direction);
+                cellsInBorderline.Add(newCell);
+                newCell.Status = StatusEnum.InStack;
+            }
+        }
+        private Cell MoveTo(Cell startCell, DirectionEnum direction)
+        {
             Cell nextCell;
-            switch (directionEnum)
+            switch (direction)
             {
                 case DirectionEnum.Up:
-                    TopOfStack.TopWall = false;
-                    nextCell = Data[TopOfStack.Row - 1, TopOfStack.Colomn];
+                    startCell.TopWall = false;
+                    nextCell = Data[startCell.Row - 1, startCell.Colomn];
                     nextCell.BottomWall = false;
                     nextCell.Status = StatusEnum.InStack;
-                    stack.Push(nextCell);
                     break;
                 case DirectionEnum.Down:
-                    TopOfStack.BottomWall = false;
-                    nextCell = Data[TopOfStack.Row + 1, TopOfStack.Colomn];
+                    startCell.BottomWall = false;
+                    nextCell = Data[startCell.Row + 1, startCell.Colomn];
                     nextCell.TopWall = false;
                     nextCell.Status = StatusEnum.InStack;
-                    stack.Push(nextCell);
                     break;
                 case DirectionEnum.Left:
-                    TopOfStack.LeftWall = false;
-                    nextCell = Data[TopOfStack.Row, TopOfStack.Colomn - 1];
+                    startCell.LeftWall = false;
+                    nextCell = Data[startCell.Row, startCell.Colomn - 1];
                     nextCell.RightWall = false;
                     nextCell.Status = StatusEnum.InStack;
-                    stack.Push(nextCell);
                     break;
                 case DirectionEnum.Right:
-                    TopOfStack.RightWall = false;
-                    nextCell = Data[TopOfStack.Row, TopOfStack.Colomn + 1];
+                    startCell.RightWall = false;
+                    nextCell = Data[startCell.Row, startCell.Colomn + 1];
                     nextCell.LeftWall = false;
                     nextCell.Status = StatusEnum.InStack;
-                    stack.Push(nextCell);
                     break;
                 default: throw new Exception("HZ CHTO ETO");
 
             }
+            return nextCell;
         }
-        //todo  строки и столбцы перепутвл. надо поправить
-        private List<DirectionEnum> GetPossibleDirections(Stack<Cell> stack)
+        private Cell GetCellFromDirection(Cell startCell, DirectionEnum direction)
+        {
+            Cell nextCell;
+            switch (direction)
+            {
+                case DirectionEnum.Up:
+                    nextCell = Data[startCell.Row - 1, startCell.Colomn];
+                    break;
+                case DirectionEnum.Down:
+                    nextCell = Data[startCell.Row + 1, startCell.Colomn];
+                    break;
+                case DirectionEnum.Left:
+                    nextCell = Data[startCell.Row, startCell.Colomn - 1];
+                    break;
+                case DirectionEnum.Right:
+                    nextCell = Data[startCell.Row, startCell.Colomn + 1];
+                    break;
+                default: throw new Exception("HZ CHTO ETO");
+
+            }
+            return nextCell;
+        }
+        private List<DirectionEnum> GetPossibleDirections(Cell cell, StatusEnum status = StatusEnum.Isolated)
         {
             List<DirectionEnum> result = new List<DirectionEnum>();
-            Cell TopOfStack = stack.Peek();
-            if (TopOfStack.Colomn != 0 && Data[TopOfStack.Row, TopOfStack.Colomn - 1].Status == StatusEnum.Isolated) result.Add(DirectionEnum.Left);
-            if (TopOfStack.Row != 0 && Data[TopOfStack.Row - 1, TopOfStack.Colomn].Status == StatusEnum.Isolated) result.Add(DirectionEnum.Up);
+            ;
+            if (cell.Colomn != 0 && Data[cell.Row, cell.Colomn - 1].Status == status) result.Add(DirectionEnum.Left);
+            if (cell.Row != 0 && Data[cell.Row - 1, cell.Colomn].Status == status) result.Add(DirectionEnum.Up);
 
-            if (TopOfStack.Colomn != Data.Colomns - 1 && Data[TopOfStack.Row, TopOfStack.Colomn + 1].Status == StatusEnum.Isolated) result.Add(DirectionEnum.Right);
-            if (TopOfStack.Row != Data.Rows - 1 && Data[TopOfStack.Row + 1, TopOfStack.Colomn].Status == StatusEnum.Isolated) result.Add(DirectionEnum.Down);
+            if (cell.Colomn != Data.Colomns - 1 && Data[cell.Row, cell.Colomn + 1].Status == status) result.Add(DirectionEnum.Right);
+            if (cell.Row != Data.Rows - 1 && Data[cell.Row + 1, cell.Colomn].Status == status) result.Add(DirectionEnum.Down);
 
             return result;
         }
+
+        #endregion
+
+
     }
 }
