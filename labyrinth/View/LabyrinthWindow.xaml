@@ -6,66 +6,20 @@
         xmlns:local="clr-namespace:MazeProj.View"
         xmlns:converters="clr-namespace:labyrinth.View.Converters"
         xmlns:viewmodel="clr-namespace:labyrinth.ViewModel"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:LabyrinthViewModel, IsDesignTimeCreatable=True}"
         Title="LabirinthWindow" Height="450" Width="800">
     <Window.Resources>
-        <converters:CellToBrushConverter x:Key="StatusToBrushConverter"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-        <SolidColorBrush Color="#e7e7e7" x:Key="BackColor"></SolidColorBrush>
-        <SolidColorBrush Color="#8a8a8a" x:Key="ContentBack"></SolidColorBrush>
-        <Style x:Key="CummonButton" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border CornerRadius="6" 
-                                x:Name="buttonBorder" 
-                                BorderBrush="CadetBlue" 
-                                BorderThickness="2"
-                                Background="{StaticResource ContentBack}"  
-                                Grid.Column="1">
 
-                                <ContentControl Margin="{TemplateBinding Padding}"
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            Content="{TemplateBinding Content}">
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resorce/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
 
-                                </ContentControl>
-                            </Border>
-                            <Rectangle x:Name="leftpad"></Rectangle>
-                            <Rectangle x:Name="rightpad" Grid.Column="2"></Rectangle>
-
-                        </Grid>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="buttonBorder" Property="Background" Value="#787878"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="true">
-                                <Setter TargetName="buttonBorder" Property="Background" Value="#686868" />
-                                <Setter TargetName="buttonBorder" Property="BorderBrush" Value="DarkBlue" />
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="leftpad"
-                              From="0" To="2"  AutoReverse="True" Duration="0:0:0.2"  />
-                                            <DoubleAnimation Storyboard.TargetProperty="Width" Storyboard.TargetName="rightpad"
-                              From="0" To="2"  AutoReverse="True" Duration="0:0:0.2"  />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
     </Window.Resources>
     <Grid Background="{StaticResource BackColor}">
         <Grid Margin="20,15">
@@ -77,7 +31,7 @@
                 <ItemsControl ItemsSource="{Binding Data}" >
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <!--тут не пашет биндинг-->
+
                             <UniformGrid  Rows="{Binding ModelsRows}" Columns="{Binding ModelsColomns}"></UniformGrid>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
@@ -109,7 +63,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Border>
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="2" Margin="13,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -135,6 +89,16 @@
 
                 <Button Grid.ColumnSpan="2" Grid.Row="3" Style="{StaticResource CummonButton}" Margin="3,5" Command="{Binding RemakeLabirinth}">ClearMaze</Button>
                 <Button Grid.ColumnSpan="2" Grid.Row="4" Style="{StaticResource CummonButton}" Margin="3,5" Command="{Binding GenerateCommand}">RandomMake</Button>
+
+                <ListBox Grid.Row="2" Grid.ColumnSpan="2" 
+                    x:Name="_listBox"
+				 ItemsSource="{StaticResource DataSource}"
+				 ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+				 ItemTemplate="{StaticResource ItemTemplate}"
+				 ItemsPanel="{StaticResource PanelTemplate}"
+				 HorizontalAlignment="Center"
+				 Width="250"
+				 BorderThickness="0" />
             </Grid>
 
         </Grid>

@@ -4,14 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SupportTestProj"
+        
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="VS_StyleListbox" Height="350" Width="275" Background="#FF5F5F5F"
+        MinHeight="350" MinWidth="275">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <UniformGrid Rows="2" Columns="5">
-            <Button Content="Left Top" />
-            <Button Content="Right Top" />
-            <Button Content="Left Bottom" />
-            <Button Content="Right Bottom" />
-        </UniformGrid>
+        <ListBox Name="customListbox" Margin="5" Style="{StaticResource ListboxStyle}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 ScrollViewer.CanContentScroll="False"
+                 ScrollViewer.PanningMode="Both"
+                 SelectionMode="Single">
+            <ListBox.Items>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">One</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Two</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Three</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Four</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Five</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Six</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Seven</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Eight</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Nine</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Ten</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">One</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Two</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Three</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Four</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Five</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Six</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Seven</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Eight</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Nine</ListBoxItem>
+                <ListBoxItem Style="{StaticResource ListboxItemStyle}" FontSize="13.5">Ten</ListBoxItem>
+            </ListBox.Items>
+        </ListBox>
     </Grid>
 </Window>
