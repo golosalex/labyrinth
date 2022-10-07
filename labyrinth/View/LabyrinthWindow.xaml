@@ -90,7 +90,7 @@
                 <Button Grid.ColumnSpan="2" Grid.Row="3" Style="{StaticResource CummonButton}" Margin="3,5" Command="{Binding RemakeLabirinth}">ClearMaze</Button>
                 <Button Grid.ColumnSpan="2" Grid.Row="4" Style="{StaticResource CummonButton}" Margin="3,5" Command="{Binding GenerateCommand}">RandomMake</Button>
 
-                <ListBox Grid.Row="2" Grid.ColumnSpan="2" 
+                <ListBox Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource CommonListBox}"
                     x:Name="_listBox"
 				 ItemsSource="{StaticResource DataSource}"
 				 ItemContainerStyle="{StaticResource ListBoxItemStyle}"
