@@ -78,6 +78,8 @@ namespace labyrinth.ViewModel
         }
         private void Generate()
         {
+            if (ModelsRows != Rows || ModelsColomns != Coloms) Remake();
+
             _model.GenerateLabyrinth();
         }
 

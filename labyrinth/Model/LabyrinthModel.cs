@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace labyrinth.Model
@@ -13,6 +14,7 @@ namespace labyrinth.Model
         private ReadOnly2DArray<Cell> _labyrinthData;
         private CellWatcher _cellWatcher;
 
+        private CancellationTokenSource cancellationTokenSource;
         //Свойства
         private CellWatcher CellWatcher
         {
@@ -38,7 +40,7 @@ namespace labyrinth.Model
         /// </summary>
         /// <param name="rows"></param>
         /// <param name="colomns"></param>
-        public LabyrinthModel(int rows = 10, int colomns = 10)
+        public LabyrinthModel(int rows = 30, int colomns = 30)
         {
             
             Cell[,] cells = CreateArrayOfCell(rows, colomns);
@@ -47,6 +49,7 @@ namespace labyrinth.Model
             _cellWatcher = new CellWatcher(LabyrinthData);
             CellWatcher.SomeCellChanched += CellWatcher_SomeCellChanched;
             TimeSpan = 25;
+            cancellationTokenSource = new CancellationTokenSource();
         }
         public void TestMethodWithCell()
         {
@@ -57,8 +60,13 @@ namespace labyrinth.Model
         }
         public void GenerateLabyrinth()
         {
+            var token = cancellationTokenSource.Token;
+            if (token.CanBeCanceled) cancellationTokenSource.Cancel();
+            
+            cancellationTokenSource=new CancellationTokenSource();
+            token = cancellationTokenSource.Token;
             LabyrinthGenerator generator = new LabyrinthGenerator(this);
-            Task.Run(() => generator.GenerateLabyrinth());
+            Task.Run(() => generator.GenerateLabyrinth(token),token);
         }
         private void CellWatcher_SomeCellChanched(object? sender, Cell e)
         {
@@ -69,6 +77,8 @@ namespace labyrinth.Model
 
         public void ChangeSize(int newRows, int newColoms)
         {
+            var token = cancellationTokenSource.Token;
+            if (token.CanBeCanceled) cancellationTokenSource.Cancel();
             Cell[,] cells = CreateArrayOfCell(newRows, newColoms);
 
             LabyrinthData = new ReadOnly2DArray<Cell>(cells);

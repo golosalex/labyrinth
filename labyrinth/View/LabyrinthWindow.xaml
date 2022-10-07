@@ -10,7 +10,7 @@
         
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:LabyrinthViewModel, IsDesignTimeCreatable=True}"
-        Title="LabirinthWindow" Height="450" Width="800">
+        Title="LabirinthWindow" Height="750" Width="1100">
     <Window.Resources>
 
         <ResourceDictionary>
@@ -39,14 +39,14 @@
                         <DataTemplate>
                             <Grid Background="{Binding CellStatus, Converter={StaticResource StatusToBrushConverter}}" SnapsToDevicePixels="True">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="3"/>
+                                    <RowDefinition Height="1"/>
                                     <RowDefinition/>
-                                    <RowDefinition Height="3"/>
+                                    <RowDefinition Height="1"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3"/>
+                                    <ColumnDefinition Width="1"/>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition Width="3"/>
+                                    <ColumnDefinition Width="1"/>
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.Column="1" Background="Black" Visibility="{Binding TopWall, Converter={StaticResource BoolToVis}}"/>
                                 <Border Grid.Row="1" Background="Black" Visibility="{Binding LeftWall, Converter={StaticResource BoolToVis}}"/>
