@@ -92,7 +92,8 @@
 
                 <ListBox Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource CommonListBox}"
                     x:Name="_listBox"
-				 ItemsSource="{StaticResource DataSource}"
+				 ItemsSource="{Binding Algorytms}"
+                         SelectedItem="{Binding ActiveAlgorithmVM}"
 				 ItemContainerStyle="{StaticResource ListBoxItemStyle}"
 				 ItemTemplate="{StaticResource ItemTemplate}"
 				 ItemsPanel="{StaticResource PanelTemplate}"

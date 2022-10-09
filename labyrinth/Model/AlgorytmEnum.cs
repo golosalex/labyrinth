@@ -9,6 +9,7 @@ namespace labyrinth.Model
     public enum AlgorytmEnum
     {
         CommonDeepSerch,
-        ModifyDeepSerch
+        ModifyDeepSerch,
+        Prima
     }
 }

@@ -21,12 +21,25 @@ namespace labyrinth.Model
             Data = model.LabyrinthData;
         }
 
-        public void GenerateLabyrinth(CancellationToken ct)
+        public void GenerateLabyrinth(CancellationToken ct, AlgorytmEnum algorithm)
         {
-
+            Model.IsGeneratigActive = true;
+            switch (algorithm)
+            {
+                case AlgorytmEnum.Prima:
+                    PrimaAlgorithmGenerate(ct);
+                    break;
+                case AlgorytmEnum.CommonDeepSerch:
+                    CommonDeepWalkGenerate(ct);
+                    break;
+                case AlgorytmEnum.ModifyDeepSerch:
+                    ModifyDeepWalkGenerate(ct);
+                    break;
+            }
             //CommonDeepWalkGenerate(ct);
             //ModifyDeepWalkGenerate(ct);
-            PrimaAlgorithmGenerate(ct);
+            //PrimaAlgorithmGenerate(ct);
+            Model.IsGeneratigActive=false;
         }
 
         #region Private Algorithm methods
@@ -184,6 +197,7 @@ namespace labyrinth.Model
             AddCellsToBorderLine(cellsInBorderline, startCell);
             while(cellsInBorderline.Count > 0)
             {
+                if (ct.IsCancellationRequested) return;
                 Cell cellToAddToLabyrinth = cellsInBorderline.ElementAt(RND.Next(cellsInBorderline.Count));
                 var directions = GetPossibleDirections(cellToAddToLabyrinth, StatusEnum.InLabirinth);
                 var directionToHome = directions[RND.Next(directions.Count)];

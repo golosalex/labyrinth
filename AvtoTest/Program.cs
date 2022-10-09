@@ -8,7 +8,7 @@ internal class Program
     private static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-
+        Console.WriteLine(AlgorytmEnum.Prima);
         LabyrinthModel labyrinthModel = new LabyrinthModel();
         labyrinthModel.SomeCellChenged += LabyrinthModel_SomeCellChenged;
         labyrinthModel.CellsChanged += LabyrinthModel_CellsChanged;

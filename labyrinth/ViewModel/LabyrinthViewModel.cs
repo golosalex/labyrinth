@@ -22,6 +22,8 @@ namespace labyrinth.ViewModel
         private int _modelColomns;
         private ReadOnly2DArray<CellViewModel> data;
         private int _timeSpanViewModel;
+        private AlgorytmEnum activeAlgorithmVM;
+        private List<AlgorytmEnum> algorytms;
         private readonly LabyrinthModel _model;
         private readonly Launcher _launcher;
 
@@ -34,16 +36,25 @@ namespace labyrinth.ViewModel
         public int Coloms { get => _coloms; set => Set<int>(ref _coloms, value); }
         public int TimeSpanViewModel
         {
-            get => _timeSpanViewModel; 
+            get => _timeSpanViewModel;
             set
             {
                 Set<int>(ref _timeSpanViewModel, value);
-                _model.TimeSpan=value;
+                _model.TimeSpan = value;
             }
         }
         public int ModelsRows { get => _model.Rows; set => Set<int>(ref _modelRows, value); }
         public int ModelsColomns { get => _model.Colomns; set => Set<int>(ref _modelColomns, value); }
-
+        public AlgorytmEnum ActiveAlgorithmVM
+        {
+            get => activeAlgorithmVM;
+            set
+            {
+                Set<AlgorytmEnum>(ref activeAlgorithmVM, value);
+                
+            }
+        }
+        public List<AlgorytmEnum> Algorytms { get => algorytms; set => Set<List<AlgorytmEnum>>(ref algorytms,value); }
         /// <summary>
         /// это для дизайнера студии, не юзать!!!
         /// </summary>
@@ -58,7 +69,7 @@ namespace labyrinth.ViewModel
             _model = model;
             _modelColomns = model.Colomns;
             _modelRows = model.Rows;
-            TimeSpanViewModel=model.TimeSpan;
+            TimeSpanViewModel = model.TimeSpan;
             var newData = model.LabyrinthData;
             var array = new CellViewModel[_model.Rows, _model.Colomns];
             foreach (var cell in newData)
@@ -75,12 +86,14 @@ namespace labyrinth.ViewModel
             RemakeLabirinth = new RelayCommand(_ => Remake());
             TestCommand = new RelayCommand(_ => _model.TestMethodWithCell());
             GenerateCommand = new RelayCommand(_ => Generate());
+            activeAlgorithmVM = AlgorytmEnum.CommonDeepSerch;
+            algorytms = Enum.GetValues(typeof(AlgorytmEnum)).Cast<AlgorytmEnum>().ToList<AlgorytmEnum>();
         }
         private void Generate()
         {
             if (ModelsRows != Rows || ModelsColomns != Coloms) Remake();
 
-            _model.GenerateLabyrinth();
+            _model.GenerateLabyrinth(ActiveAlgorithmVM);
         }
 
         private void Remake()
